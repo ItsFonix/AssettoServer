@@ -71,6 +71,31 @@ public class Discord
             )).ContinueWith(t => Log.Error(t.Exception, "Error in Discord webhook"), TaskContinuationOptions.OnlyOnFaulted);
         }
     }
+    
+    private void OnClientFirstUpdateSent(ACTcpClient sender, EventArgs args)
+        {
+            string username;
+        
+        if (Configuration.ChatMessageIncludeServerName)
+        {
+            username = _serverNameTruncated;
+        }
+        else
+        {
+            username = sender.Name ?? throw new InvalidOperationException("ACTcpClient has no name set");
+        }
+        
+        DiscordMessage msg = new DiscordMessage
+        {
+            AvatarUrl = Configuration.PictureUrl,
+            Username = username,
+            Content = $"has connected in {sender.EntryCar.Model}!",
+            AllowedMentions = new AllowedMentions()
+            };
+        
+            ChatHook!.SendAsync(msg)
+                .ContinueWith(t => Log.Error(t.Exception, "Error in Discord webhook"), TaskContinuationOptions.OnlyOnFaulted);
+    }
 
     private void OnChatMessageReceived(ACTcpClient sender, ChatEventArgs args)
     {
