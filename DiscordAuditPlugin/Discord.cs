@@ -40,6 +40,7 @@ public class Discord
             };
 
             server.ChatMessageReceived += OnChatMessageReceived;
+            server.ClientFirstUpdateSent += OnClientFirstUpdateSent;
         }
     }
 
